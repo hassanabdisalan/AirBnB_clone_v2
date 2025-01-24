@@ -17,7 +17,7 @@ sudo rm -rf /data/web_static/current
 sudo ln -s /data/web_static/releases/test/ /data/web_static/current
 
 # Give ownership to the ubuntu user and group
-sudo chown -R ubuntu:ubuntu /data/
+sudo chown -R hassan_abdisalan:hassan_abdisalan /data/
 
 # Update Nginx configuration
 NGINX_CONFIG="/etc/nginx/sites-available/default"
