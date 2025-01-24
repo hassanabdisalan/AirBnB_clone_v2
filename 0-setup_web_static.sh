@@ -1,30 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Sets up a web server for deployment of web_static.
 
-# Install Nginx if not already installed
-if ! command -v nginx &> /dev/null; then
-    sudo apt update
-    sudo apt install -y nginx
-fi
+apt-get update
+apt-get install -y nginx
 
-# Create necessary directories
-sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
+mkdir -p /data/web_static/releases/test/
+mkdir -p /data/web_static/shared/
+echo "Holberton School" > /data/web_static/releases/test/index.html
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-# Create a fake HTML file
-echo "<html><head><title>Test</title></head><body><h1>Web Static Deployment</h1></body></html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
+chown -R hassan_abdisalan:hassan_abdisalan /data/
+chgrp -R hassan_abdisalan:hassan_abdisalan /data/
 
-# Create or recreate the symbolic link
-sudo rm -rf /data/web_static/current
-sudo ln -s /data/web_static/releases/test/ /data/web_static/current
+printf %s "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    add_header X-Served-By $HOSTNAME;
+    root   /var/www/html;
+    index  index.html index.htm;
 
-# Give ownership to the ubuntu user and group
-sudo chown -R hassan_abdisalan:hassan_abdisalan /data/
+    location /hbnb_static {
+	alias /data/web_static/current;
+	index index.html index.htm;
+    }
 
-# Update Nginx configuration
-NGINX_CONFIG="/etc/nginx/sites-available/default"
-sudo sed -i '/server_name _;/a \
-    location /hbnb_static/ {\n        alias /data/web_static/current/;\n    }' "$NGINX_CONFIG"
+    location /redirect_me {
+	return 301 http://cuberule.com/;
+    }
 
-# Restart Nginx
-sudo systemctl restart nginx
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}" > /etc/nginx/sites-available/default
 
-exit 0
+service nginx restart
