@@ -9,8 +9,8 @@ mkdir -p /data/web_static/shared/
 echo "Holberton School" > /data/web_static/releases/test/index.html
 ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-chown -R hassan_abdisalan:hassan_abdisalan /data/
-chgrp -R hassan_abdisalan:hassan_abdisalan /data/
+chown -R hassanabdisalan:hassanabdisalan /data/
+chgrp -R hassanabdisalan:hassanabdisalan /data/
 
 printf %s "server {
     listen 80 default_server;
